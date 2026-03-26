@@ -15,13 +15,12 @@ export async function GET() {
       .eq("id", clinicId)
       .single();
 
-    // Get available slots grouped by day
+    // Get available slots (one row per active day)
     const { data: slots } = await supabase
       .from("available_slots")
-      .select("day_of_week, time_slot, is_active")
+      .select("day_of_week, start_time, end_time, slot_duration_minutes")
       .eq("clinic_id", clinicId)
-      .order("day_of_week")
-      .order("time_slot");
+      .order("day_of_week");
 
     // Get blocked dates
     const { data: blockedDates } = await supabase
@@ -32,32 +31,15 @@ export async function GET() {
 
     // Determine working days and time range from slots
     const workingDays: number[] = [];
-    let startTime = "08:00";
+    let startTime = "09:00";
     let endTime = "17:00";
     let slotDuration = 30;
 
     if (slots && slots.length > 0) {
-      const activeDays = new Set(
-        slots.filter((s: { is_active: boolean }) => s.is_active).map((s: { day_of_week: number }) => s.day_of_week)
-      );
-      workingDays.push(...Array.from(activeDays).sort() as number[]);
-
-      const times = slots
-        .filter((s: { is_active: boolean }) => s.is_active)
-        .map((s: { time_slot: string }) => s.time_slot)
-        .sort();
-
-      if (times.length > 0) {
-        startTime = times[0].substring(0, 5);
-        endTime = times[times.length - 1].substring(0, 5);
-      }
-
-      // Estimate slot duration from gap between first two slots
-      if (times.length >= 2) {
-        const [h1, m1] = times[0].split(":").map(Number);
-        const [h2, m2] = times[1].split(":").map(Number);
-        slotDuration = (h2 * 60 + m2) - (h1 * 60 + m1);
-      }
+      workingDays.push(...slots.map((s) => s.day_of_week));
+      startTime = slots[0].start_time.substring(0, 5);
+      endTime = slots[0].end_time.substring(0, 5);
+      slotDuration = slots[0].slot_duration_minutes;
     }
 
     return Response.json({
@@ -100,27 +82,14 @@ export async function PATCH(request: NextRequest) {
         .delete()
         .eq("clinic_id", clinicId);
 
-      // Generate new slots
-      const newSlots: { clinic_id: string; day_of_week: number; time_slot: string; is_active: boolean }[] = [];
-
-      for (let day = 0; day <= 6; day++) {
-        const isActive = working_days.includes(day);
-        const [startH, startM] = start_time.split(":").map(Number);
-        const [endH, endM] = end_time.split(":").map(Number);
-        const startMinutes = startH * 60 + startM;
-        const endMinutes = endH * 60 + endM;
-
-        for (let m = startMinutes; m < endMinutes; m += slot_duration) {
-          const h = Math.floor(m / 60);
-          const min = m % 60;
-          newSlots.push({
-            clinic_id: clinicId,
-            day_of_week: day,
-            time_slot: `${h.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:00`,
-            is_active: isActive,
-          });
-        }
-      }
+      // Insert one row per active working day
+      const newSlots = working_days.map((day: number) => ({
+        clinic_id: clinicId,
+        day_of_week: day,
+        start_time: start_time,
+        end_time: end_time,
+        slot_duration_minutes: slot_duration,
+      }));
 
       if (newSlots.length > 0) {
         await supabase.from("available_slots").insert(newSlots);
@@ -129,13 +98,11 @@ export async function PATCH(request: NextRequest) {
 
     // Update blocked dates if provided
     if (blocked_dates !== undefined) {
-      // Remove all existing blocked dates
       await supabase
         .from("blocked_dates")
         .delete()
         .eq("clinic_id", clinicId);
 
-      // Insert new blocked dates
       if (blocked_dates.length > 0) {
         const newBlocked = blocked_dates.map((bd: { blocked_date: string; reason?: string }) => ({
           clinic_id: clinicId,

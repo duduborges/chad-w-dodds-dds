@@ -49,17 +49,31 @@ export async function GET(request: NextRequest) {
     // Get day of week (0=Sunday, 1=Monday, ...)
     const dayOfWeek = targetDate.getDay();
 
-    // Get available slots for this day
-    const { data: availableSlots } = await supabase
+    // Get available_slots config for this day (one row with start_time, end_time, slot_duration_minutes)
+    const { data: slotConfig } = await supabase
       .from("available_slots")
-      .select("time_slot")
+      .select("start_time, end_time, slot_duration_minutes")
       .eq("clinic_id", clinicId)
       .eq("day_of_week", dayOfWeek)
-      .eq("is_active", true)
-      .order("time_slot", { ascending: true });
+      .single();
 
-    if (!availableSlots || availableSlots.length === 0) {
+    if (!slotConfig) {
       return Response.json({ slots: [] });
+    }
+
+    // Generate time slots from start_time to end_time
+    const [startH, startM] = slotConfig.start_time.split(":").map(Number);
+    const [endH, endM] = slotConfig.end_time.split(":").map(Number);
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+    const duration = slotConfig.slot_duration_minutes;
+
+    const allSlots: string[] = [];
+    for (let m = startMinutes; m < endMinutes; m += duration) {
+      const h = Math.floor(m / 60);
+      const min = m % 60;
+      const time24 = `${h.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:00`;
+      allSlots.push(time24);
     }
 
     // Get existing appointments for this date to exclude booked slots
@@ -74,12 +88,11 @@ export async function GET(request: NextRequest) {
       (appointments || []).map((a: { appointment_time: string }) => a.appointment_time)
     );
 
-    // Filter out booked slots and format for display
-    const slots = availableSlots
-      .filter((s: { time_slot: string }) => !bookedTimes.has(s.time_slot))
-      .map((s: { time_slot: string }) => {
-        // Convert 24h to 12h format
-        const [hours, minutes] = s.time_slot.split(":");
+    // Filter out booked slots and format for display (12h)
+    const slots = allSlots
+      .filter((time24) => !bookedTimes.has(time24))
+      .map((time24) => {
+        const [hours, minutes] = time24.split(":");
         const h = parseInt(hours);
         const ampm = h >= 12 ? "PM" : "AM";
         const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;

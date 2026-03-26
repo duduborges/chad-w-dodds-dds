@@ -208,43 +208,10 @@ export default function BookingForm() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Step 1: Select Service */}
-      {services.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
-            Reason for Visit
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => setSelectedService("")}
-              className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                selectedService === "" ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
-              }`}
-            >
-              General Visit
-            </button>
-            {services.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setSelectedService(s.id)}
-                className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  selectedService === s.id ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
-                }`}
-              >
-                {s.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Select Date */}
+      {/* Step 1: Select Date */}
       <div className="bg-white rounded-2xl p-6 shadow-sm">
         <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "2" : "1"}</span>
+          <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
           Select a Date
         </h4>
         <div className="flex items-center justify-between mb-6">
@@ -309,6 +276,40 @@ export default function BookingForm() {
       </div>
 
       {/* Time slots */}
+      {/* Step 2: Reason for Visit (after date selected) */}
+      {selectedDate && services.length > 0 && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-3 flex items-center gap-2">
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+            Reason for Visit
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedService("")}
+              className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                selectedService === "" ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
+              }`}
+            >
+              General Visit
+            </button>
+            {services.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setSelectedService(s.id)}
+                className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  selectedService === s.id ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
+                }`}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Pick a Time */}
       {selectedDate && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">

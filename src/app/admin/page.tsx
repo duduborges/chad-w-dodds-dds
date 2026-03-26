@@ -629,13 +629,13 @@ export default function AdminPage() {
   // Login screen
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-surface)] p-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-primary-dark)] via-[var(--color-primary)] to-[var(--color-primary-light)] p-4">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full max-w-sm border border-white/20">
           <div className="text-center mb-6">
-            <div className="w-14 h-14 bg-[var(--color-primary-50)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <LuLock className="w-7 h-7 text-[var(--color-primary)]" />
+            <div className="w-16 h-16 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <LuLock className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold font-[family-name:var(--font-jakarta)]">Admin Login</h1>
+            <h1 className="text-2xl font-bold font-[family-name:var(--font-jakarta)] text-[var(--color-text)]">Admin Login</h1>
             <p className="text-sm text-[var(--color-text-light)] mt-1">Chad W. Dodds D.D.S.</p>
           </div>
 
@@ -680,19 +680,17 @@ export default function AdminPage() {
       )}
 
       {/* Header */}
-      <header className="bg-white border-b shadow-sm sticky top-0 z-30">
+      <header className="bg-gradient-to-r from-[var(--color-primary-dark)] to-[var(--color-primary)] sticky top-0 z-30 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <h1 className="font-bold font-[family-name:var(--font-jakarta)] text-lg text-[var(--color-text)]">
+          <h1 className="font-bold font-[family-name:var(--font-jakarta)] text-lg text-white">
             Welcome, {adminName || "Admin"}
           </h1>
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowSettings(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Settings">
-              <LuSettings className="w-5 h-5 text-[var(--color-text-light)]" />
-              <span className="hidden sm:inline sr-only">Settings</span>
+            <button onClick={() => setShowSettings(true)} className="p-2 hover:bg-white/15 rounded-lg transition-colors" title="Settings">
+              <LuSettings className="w-5 h-5 text-white/80" />
             </button>
-            <button onClick={handleLogout} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-red-500" title="Sign Out">
-              <LuLogOut className="w-5 h-5" />
-              <span className="hidden sm:inline sr-only">Sign Out</span>
+            <button onClick={handleLogout} className="p-2 hover:bg-white/15 rounded-lg transition-colors" title="Sign Out">
+              <LuLogOut className="w-5 h-5 text-white/80" />
             </button>
           </div>
         </div>
@@ -700,8 +698,8 @@ export default function AdminPage() {
 
       {/* Notification email banner */}
       {!notificationEmail && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
-          <div className="max-w-6xl mx-auto flex items-center gap-2 text-amber-800 text-sm">
+        <div className="bg-[var(--color-primary-50)] border-b border-[var(--color-primary)]/20 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center gap-2 text-[var(--color-primary-dark)] text-sm">
             <LuBell className="w-4 h-4 shrink-0" />
             <span>Set up your notification email in <button onClick={() => setShowSettings(true)} className="font-semibold underline">Settings</button> to receive booking alerts.</span>
           </div>
@@ -712,23 +710,23 @@ export default function AdminPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: kpis.total, color: "bg-blue-50 text-blue-700" },
-            { label: "Pending", value: kpis.pending, color: "bg-yellow-50 text-yellow-700" },
-            { label: "Confirmed", value: kpis.confirmed, color: "bg-green-50 text-green-700" },
-            { label: "Cancelled", value: kpis.cancelled, color: "bg-red-50 text-red-700" },
+            { label: "Total", value: kpis.total, color: "bg-[var(--color-primary-50)] text-[var(--color-primary-dark)] border-[var(--color-primary)]/20" },
+            { label: "Pending", value: kpis.pending, color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+            { label: "Confirmed", value: kpis.confirmed, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+            { label: "Cancelled", value: kpis.cancelled, color: "bg-red-50 text-red-700 border-red-200" },
           ].map((kpi) => (
-            <div key={kpi.label} className={`${kpi.color} rounded-xl p-4 border`}>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="text-sm font-medium opacity-80">{kpi.label}</div>
+            <div key={kpi.label} className={`${kpi.color} rounded-2xl p-5 border shadow-sm`}>
+              <div className="text-3xl font-bold font-[family-name:var(--font-jakarta)]">{kpi.value}</div>
+              <div className="text-sm font-medium opacity-70 mt-1">{kpi.label}</div>
             </div>
           ))}
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-xl border shadow-sm">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
           {/* View mode & date navigation */}
           <div className="p-4 flex flex-wrap items-center gap-3 justify-between">
-            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center gap-1 bg-[var(--color-primary-50)]/50 rounded-xl p-1">
               {(["day", "week", "month"] as const).map((mode) => (
                 <button key={mode} onClick={() => setViewMode(mode)} className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-all ${viewMode === mode ? "bg-white shadow text-[var(--color-primary)]" : "text-[var(--color-text-light)] hover:text-[var(--color-text)]"}`}>
                   {mode}
@@ -821,10 +819,10 @@ function AppointmentCard({
   onAction: (apt: Appointment, action: "confirm" | "cancel") => void;
 }) {
   return (
-    <div className="bg-white rounded-xl border shadow-sm p-4">
+    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition-all duration-300 ${apt.status === "cancelled" ? "opacity-60" : ""}`}>
       <div className="flex items-start gap-3">
         {/* Avatar */}
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 ${AVATAR_COLORS[apt.status]}`}>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 ${AVATAR_COLORS[apt.status]}`}>
           {apt.patient_name.charAt(0).toUpperCase()}
         </div>
 
@@ -867,7 +865,7 @@ function AppointmentCard({
               <button
                 onClick={() => onAction(apt, "confirm")}
                 disabled={actionLoading === apt.id}
-                className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-all disabled:opacity-60 flex items-center gap-1"
+                className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-sm font-medium hover:bg-emerald-100 transition-all disabled:opacity-60 flex items-center gap-1"
               >
                 {actionLoading === apt.id ? <LuLoader className="w-3.5 h-3.5 animate-spin" /> : <LuCheck className="w-3.5 h-3.5" />}
                 Confirm & Notify

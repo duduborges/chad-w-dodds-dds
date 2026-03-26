@@ -12,6 +12,8 @@ import {
   LuChevronLeft,
   LuChevronRight,
   LuLoader,
+  LuX,
+  LuStethoscope,
 } from "react-icons/lu";
 
 interface ScheduleConfig {
@@ -44,6 +46,7 @@ export default function BookingForm() {
   const [selectedService, setSelectedService] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState(1);
 
   // Fallback schedule for this clinic (Mon-Thu)
   const fallbackSchedule: ScheduleConfig = {
@@ -104,6 +107,7 @@ export default function BookingForm() {
     setSelectedDate(dateStr);
     setSelectedSlot(null);
     fetchSlots(dateStr);
+    setStep(services.length > 0 ? 2 : 3);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,102 +210,103 @@ export default function BookingForm() {
     );
   }
 
+  const hasServices = services.length > 0;
+  const totalSteps = hasServices ? 4 : 3;
+  const serviceName = selectedService ? services.find(s => s.id === selectedService)?.name || "General Visit" : "General Visit";
+
+  const formatSelectedDate = (d: string) => {
+    const date = new Date(d + "T00:00:00");
+    return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Step 1: Select Date */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm">
-        <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
-          Select a Date
-        </h4>
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={goToPrevMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-300"
-            aria-label="Previous month"
-          >
-            <LuChevronLeft className="w-5 h-5" />
-          </button>
-          <h3 className="text-lg font-bold font-[family-name:var(--font-jakarta)] flex items-center gap-2">
-            <LuCalendar className="w-5 h-5 text-[var(--color-primary)]" />
-            {MONTH_NAMES[month]} {year}
-          </h3>
-          <button
-            onClick={goToNextMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-300"
-            aria-label="Next month"
-          >
-            <LuChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Day headers */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {DAY_NAMES.map((d) => (
-            <div key={d} className="text-center text-xs font-semibold text-[var(--color-text-light)] py-1">
-              {d}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-1">
-          {Array.from({ length: firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} />
-          ))}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            const available = isDateAvailable(day);
-            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            const isSelected = selectedDate === dateStr;
-
-            return (
-              <button
-                key={day}
-                disabled={!available}
-                onClick={() => handleDateSelect(dateStr)}
-                className={`h-10 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  isSelected
-                    ? "bg-[var(--color-primary)] text-white shadow-md"
-                    : available
-                    ? "hover:bg-[var(--color-primary-50)] text-[var(--color-text)]"
-                    : "text-gray-300 cursor-not-allowed"
-                }`}
-              >
-                {day}
-              </button>
-            );
-          })}
-        </div>
+      {/* Progress bar */}
+      <div className="flex items-center gap-2">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i < step ? "bg-[var(--color-primary)]" : "bg-gray-200"}`} />
+        ))}
       </div>
 
-      {/* Time slots */}
-      {/* Step 2: Reason for Visit (after date selected) */}
-      {selectedDate && services.length > 0 && (
+      {/* Summary of previous selections */}
+      {step > 1 && (
+        <div className="flex flex-wrap gap-2">
+          {selectedDate && (
+            <button onClick={() => { setStep(1); setSelectedSlot(null); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary-50)] text-[var(--color-primary)] rounded-full text-sm font-medium hover:bg-[var(--color-primary)]/20 transition-all">
+              <LuCalendar className="w-3.5 h-3.5" />
+              {formatSelectedDate(selectedDate)}
+              <LuX className="w-3 h-3 opacity-60" />
+            </button>
+          )}
+          {hasServices && step > 2 && (
+            <button onClick={() => setStep(2)} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary-50)] text-[var(--color-primary)] rounded-full text-sm font-medium hover:bg-[var(--color-primary)]/20 transition-all">
+              <LuStethoscope className="w-3.5 h-3.5" />
+              {serviceName}
+              <LuX className="w-3 h-3 opacity-60" />
+            </button>
+          )}
+          {selectedSlot && step > (hasServices ? 3 : 2) && (
+            <button onClick={() => setStep(hasServices ? 3 : 2)} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary-50)] text-[var(--color-primary)] rounded-full text-sm font-medium hover:bg-[var(--color-primary)]/20 transition-all">
+              <LuClock className="w-3.5 h-3.5" />
+              {selectedSlot}
+              <LuX className="w-3 h-3 opacity-60" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Step 1: Select Date */}
+      {step === 1 && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+            Select a Date
+          </h4>
+          <div className="flex items-center justify-between mb-6">
+            <button onClick={goToPrevMonth} className="p-2 hover:bg-gray-100 rounded-lg transition-all"><LuChevronLeft className="w-5 h-5" /></button>
+            <h3 className="text-lg font-bold font-[family-name:var(--font-jakarta)] flex items-center gap-2">
+              <LuCalendar className="w-5 h-5 text-[var(--color-primary)]" />
+              {MONTH_NAMES[month]} {year}
+            </h3>
+            <button onClick={goToNextMonth} className="p-2 hover:bg-gray-100 rounded-lg transition-all"><LuChevronRight className="w-5 h-5" /></button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {DAY_NAMES.map((d) => (
+              <div key={d} className="text-center text-xs font-semibold text-[var(--color-text-light)] py-1">{d}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: firstDay }).map((_, i) => (<div key={`empty-${i}`} />))}
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1;
+              const available = isDateAvailable(day);
+              const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const isSelected = selectedDate === dateStr;
+              return (
+                <button key={day} disabled={!available} onClick={() => handleDateSelect(dateStr)}
+                  className={`h-10 rounded-lg text-sm font-medium transition-all duration-300 ${isSelected ? "bg-[var(--color-primary)] text-white shadow-md" : available ? "hover:bg-[var(--color-primary-50)] text-[var(--color-text)]" : "text-gray-300 cursor-not-allowed"}`}
+                >{day}</button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Reason for Visit */}
+      {step === 2 && hasServices && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-3 flex items-center gap-2">
             <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
             Reason for Visit
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => setSelectedService("")}
-              className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                selectedService === "" ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
-              }`}
-            >
+            <button type="button" onClick={() => { setSelectedService(""); setStep(3); }}
+              className="px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-[var(--color-primary)] hover:text-white">
               General Visit
             </button>
             {services.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setSelectedService(s.id)}
-                className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  selectedService === s.id ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
-                }`}
-              >
+              <button key={s.id} type="button" onClick={() => { setSelectedService(s.id); setStep(3); }}
+                className="px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-[var(--color-primary)] hover:text-white">
                 {s.name}
               </button>
             ))}
@@ -310,10 +315,10 @@ export default function BookingForm() {
       )}
 
       {/* Step 3: Pick a Time */}
-      {selectedDate && (
+      {step === (hasServices ? 3 : 2) && selectedDate && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
-            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "3" : "2"}</span>
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{hasServices ? "3" : "2"}</span>
             Pick a Time
           </h4>
 
@@ -328,15 +333,8 @@ export default function BookingForm() {
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {slots.map((slot) => (
-                <button
-                  key={slot}
-                  onClick={() => setSelectedSlot(slot)}
-                  className={`py-2 px-3 rounded-lg text-sm font-medium transition-all duration-300 border ${
-                    selectedSlot === slot
-                      ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md"
-                      : "border-gray-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-                  }`}
-                >
+                <button key={slot} onClick={() => { setSelectedSlot(slot); setStep(hasServices ? 4 : 3); }}
+                  className="py-2 px-3 rounded-xl text-sm font-medium transition-all bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-primary)] hover:text-white">
                   {slot}
                 </button>
               ))}
@@ -345,11 +343,11 @@ export default function BookingForm() {
         </div>
       )}
 
-      {/* Booking form */}
-      {selectedSlot && (
+      {/* Step 4: Your Information */}
+      {step === (hasServices ? 4 : 3) && selectedSlot && (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
           <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-2 flex items-center gap-2">
-            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "4" : "3"}</span>
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{hasServices ? "4" : "3"}</span>
             Your Information
           </h4>
 

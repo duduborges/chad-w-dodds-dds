@@ -698,7 +698,7 @@ export default function AdminPage() {
 
       {/* Notification email banner */}
       {!notificationEmail && (
-        <div className="bg-[var(--color-primary-50)] border-b border-[var(--color-primary)]/20 px-4 py-3">
+        <div className="bg-[var(--color-primary-50)] px-4 py-3">
           <div className="max-w-6xl mx-auto flex items-center gap-2 text-[var(--color-primary-dark)] text-sm">
             <LuBell className="w-4 h-4 shrink-0" />
             <span>Set up your notification email in <button onClick={() => setShowSettings(true)} className="font-semibold underline">Settings</button> to receive booking alerts.</span>
@@ -710,12 +710,12 @@ export default function AdminPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "Total", value: kpis.total, color: "bg-[var(--color-primary-50)] text-[var(--color-primary-dark)] border-[var(--color-primary)]/20" },
-            { label: "Pending", value: kpis.pending, color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
-            { label: "Confirmed", value: kpis.confirmed, color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-            { label: "Cancelled", value: kpis.cancelled, color: "bg-red-50 text-red-700 border-red-200" },
+            { label: "Total", value: kpis.total, color: "bg-[var(--color-primary-50)] text-[var(--color-primary-dark)]" },
+            { label: "Pending", value: kpis.pending, color: "bg-yellow-50 text-yellow-700" },
+            { label: "Confirmed", value: kpis.confirmed, color: "bg-emerald-50 text-emerald-700" },
+            { label: "Cancelled", value: kpis.cancelled, color: "bg-red-50 text-red-700" },
           ].map((kpi) => (
-            <div key={kpi.label} className={`${kpi.color} rounded-2xl p-5 border shadow-sm`}>
+            <div key={kpi.label} className={`${kpi.color} rounded-2xl p-5 shadow-sm`}>
               <div className="text-3xl font-bold font-[family-name:var(--font-jakarta)]">{kpi.value}</div>
               <div className="text-sm font-medium opacity-70 mt-1">{kpi.label}</div>
             </div>
@@ -723,7 +723,7 @@ export default function AdminPage() {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="bg-white rounded-2xl shadow-sm">
           {/* View mode & date navigation */}
           <div className="p-4 flex flex-wrap items-center gap-3 justify-between">
             <div className="flex items-center gap-1 bg-[var(--color-primary-50)]/50 rounded-xl p-1">
@@ -757,14 +757,14 @@ export default function AdminPage() {
           </div>
 
           {/* Status filters */}
-          <div className="px-4 pb-4 border-t pt-3 flex flex-wrap gap-2">
+          <div className="px-4 pb-4 pt-3 flex flex-wrap gap-2">
             {[
               { key: "all", label: "All", count: kpis.total },
               { key: "pending", label: "Pending", count: kpis.pending },
               { key: "confirmed", label: "Confirmed", count: kpis.confirmed },
               { key: "cancelled", label: "Cancelled", count: kpis.cancelled },
             ].map((f) => (
-              <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${statusFilter === f.key ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]" : "bg-white text-[var(--color-text-light)] border-gray-200 hover:border-gray-300"}`}>
+              <button key={f.key} onClick={() => setStatusFilter(f.key)} className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${statusFilter === f.key ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"}`}>
                 {f.label} <span className="ml-1 opacity-70">({f.count})</span>
               </button>
             ))}
@@ -819,7 +819,7 @@ function AppointmentCard({
   onAction: (apt: Appointment, action: "confirm" | "cancel") => void;
 }) {
   return (
-    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition-all duration-300 ${apt.status === "cancelled" ? "opacity-60" : ""}`}>
+    <div className={`bg-white rounded-2xl shadow-sm p-4 hover:shadow-md transition-all duration-300 ${apt.status === "cancelled" ? "opacity-60" : ""}`}>
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 ${AVATAR_COLORS[apt.status]}`}>

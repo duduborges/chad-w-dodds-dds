@@ -102,7 +102,7 @@ function Hero() {
       {/* Background image overlay */}
       <div className="absolute inset-0">
         <img
-          src="/images/logo.jpg"
+          src="/images/logo.png"
           alt=""
           className="w-full h-full object-cover opacity-20"
         />
@@ -569,7 +569,7 @@ function Footer() {
         <div className="grid sm:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <img src="/images/logo.jpg" alt="Logo" className="w-10 h-10 rounded-lg object-contain bg-white/10 p-1" />
+              <img src="/images/logo.png" alt="Logo" className="w-10 h-10 rounded-lg object-contain bg-white/10 p-1" />
               <h3 className="font-bold font-[family-name:var(--font-jakarta)] text-lg">{CLINIC.name}</h3>
             </div>
             <p className="text-white/60 text-sm">{CLINIC.specialty}</p>
@@ -635,7 +635,7 @@ function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <a href="#" className="font-bold font-[family-name:var(--font-jakarta)] text-[var(--color-primary)] text-lg">
           <span className="flex items-center gap-2">
-            <img src="/images/logo.jpg" alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
+            <img src="/images/logo.png" alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
             <span className="hidden sm:inline">Chad W. Dodds D.D.S.</span>
             <span className="sm:hidden">Dodds Dental</span>
           </span>

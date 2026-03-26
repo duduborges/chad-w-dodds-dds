@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Get admin user
     const { data: admin } = await supabase
       .from("admin_users")
-      .select("id, clinic_id, name, email, password_hash, notification_email")
+      .select("id, clinic_id, name, email, password, notification_email")
       .eq("clinic_id", clinic.id)
       .eq("email", email)
       .single();
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Compare password
-    const isValid = await bcrypt.compare(password, admin.password_hash);
+    const isValid = await bcrypt.compare(password, admin.password);
     if (!isValid) {
       return Response.json({ error: "Invalid credentials" }, { status: 401 });
     }

@@ -398,13 +398,8 @@ function HoursLocationSection() {
             </div>
           </div>
 
-          {/* Office photo + Map */}
+          {/* Map */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-            <img
-              src="/images/office.jpg"
-              alt="Dental office interior"
-              className="w-full h-48 object-cover"
-            />
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2978.5!2d-114.461!3d42.5628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDMzJzQ2LjEiTiAxMTTCsDI3JzM5LjYiVw!5e0!3m2!1sen!2sus!4v1"
               width="100%"
@@ -512,53 +507,25 @@ function ContactSection() {
             </div>
           </div>
 
-          {/* Contact form */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            <h3 className="text-xl font-bold font-[family-name:var(--font-jakarta)] mb-4">Send Us a Message</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.target as HTMLFormElement;
-                const formData = new FormData(form);
-                window.location.href = `mailto:${CLINIC.email}?subject=Website Inquiry from ${formData.get("name")}&body=Name: ${formData.get("name")}%0AEmail: ${formData.get("email")}%0APhone: ${formData.get("phone")}%0A%0A${formData.get("message")}`;
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                required
-                className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+          {/* Staff photos */}
+          <div className="space-y-4">
+            <img
+              src="/images/staff.jpg"
+              alt="Friendly front desk staff"
+              className="w-full h-56 object-cover rounded-2xl border-2 border-white/20 shadow-lg"
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <img
+                src="/images/doctor1.jpg"
+                alt="Dental hygienist"
+                className="w-full h-40 object-cover rounded-2xl border-2 border-white/20 shadow-lg"
               />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                required
-                className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+              <img
+                src="/images/office.jpg"
+                alt="Office building"
+                className="w-full h-40 object-cover rounded-2xl border-2 border-white/20 shadow-lg"
               />
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Your Phone"
-                className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <textarea
-                name="message"
-                rows={3}
-                placeholder="Your Message"
-                required
-                className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none"
-              />
-              <button
-                type="submit"
-                className="w-full py-3 bg-white text-[var(--color-primary)] font-bold rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <LuMessageCircle className="w-5 h-5" />
-                Send Message
-              </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>

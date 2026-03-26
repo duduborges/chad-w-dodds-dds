@@ -207,9 +207,46 @@ export default function BookingForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Calendar */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Step 1: Select Service */}
+      {services.length > 0 && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-3 flex items-center gap-2">
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+            Reason for Visit
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedService("")}
+              className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                selectedService === "" ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
+              }`}
+            >
+              General Visit
+            </button>
+            {services.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setSelectedService(s.id)}
+                className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  selectedService === s.id ? "bg-[var(--color-primary)] text-white shadow-sm" : "bg-[var(--color-surface)] text-[var(--color-text-light)] hover:bg-gray-200"
+                }`}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Select Date */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
+          <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "2" : "1"}</span>
+          Select a Date
+        </h4>
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={goToPrevMonth}
@@ -273,10 +310,10 @@ export default function BookingForm() {
 
       {/* Time slots */}
       {selectedDate && (
-        <div className="mt-6 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-          <h4 className="text-lg font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
-            <LuClock className="w-5 h-5 text-[var(--color-primary)]" />
-            Available Times
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-4 flex items-center gap-2">
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "3" : "2"}</span>
+            Pick a Time
           </h4>
 
           {slotsLoading ? (
@@ -309,24 +346,11 @@ export default function BookingForm() {
 
       {/* Booking form */}
       {selectedSlot && (
-        <form onSubmit={handleSubmit} className="mt-6 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <h4 className="text-lg font-bold font-[family-name:var(--font-jakarta)] mb-2">Your Information</h4>
-
-          {services.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Service</label>
-              <select
-                value={selectedService}
-                onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all duration-300"
-              >
-                <option value="">General Appointment</option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+          <h4 className="text-base font-bold font-[family-name:var(--font-jakarta)] mb-2 flex items-center gap-2">
+            <span className="w-6 h-6 bg-[var(--color-primary)] text-white rounded-full flex items-center justify-center text-xs font-bold">{services.length > 0 ? "4" : "3"}</span>
+            Your Information
+          </h4>
 
           <div>
             <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Full Name</label>

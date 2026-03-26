@@ -398,8 +398,13 @@ function HoursLocationSection() {
             </div>
           </div>
 
-          {/* Map */}
+          {/* Office photo + Map */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+            <img
+              src="/images/office.jpg"
+              alt="Dental office interior"
+              className="w-full h-48 object-cover"
+            />
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2978.5!2d-114.461!3d42.5628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDMzJzQ2LjEiTiAxMTTCsDI3JzM5LjYiVw!5e0!3m2!1sen!2sus!4v1"
               width="100%"

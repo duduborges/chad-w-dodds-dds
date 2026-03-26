@@ -9,9 +9,8 @@ export async function GET() {
 
     const { data: services, error } = await supabase
       .from("services")
-      .select("id, name, duration_minutes")
+      .select("id, name, duration_minutes, price")
       .eq("clinic_id", clinicId)
-      .eq("is_active", true)
       .order("name", { ascending: true });
 
     if (error) {
